@@ -1,0 +1,23 @@
+{% extends "layout.html" %}
+{% block content %}
+<body style="background-image: url('~/static/background-pic.jpg')">
+    <div class="content-section">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Brand</th>
+          </tr>
+        </thead>
+        {% for perfume in results %}
+        <tbody>
+          <tr>
+            <td><i>{{ perfume.name }}</i></td>
+            <td>{{ perfume.brand }}</td>
+          </tr>
+        </tbody>
+        {% endfor%}
+      </table>
+    </div>
+  </body>
+{% endblock content %}

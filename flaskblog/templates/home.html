@@ -1,0 +1,16 @@
+{% extends "layout.html" %}
+{% block content %}
+  <div class="card">
+      <div class="card-body">
+        <h4 class="card-title">Witaj</h4>
+        
+        <p class="card-text">
+          Witaj w Twoim osobistym doradcy perfum.
+          Jeśli jesteś nowy w świecie perfum, kliknij proszę link do ankiety.
+          Jeśli masz już swoje ulubione type, ale chcesz odkryć coś nowego utrzymanego w tym samym stylu - zaloguj się.
+        </p>
+        <a href="{{ url_for('users.fill_questionnaire') }}" class="card-link">Ankieta</a>
+        <a href="{{ url_for('users.login') }}" class="card-link">Zaloguj się</a>
+      </div>
+    </div>
+{% endblock content %}
