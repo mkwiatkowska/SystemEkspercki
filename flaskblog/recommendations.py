@@ -1,6 +1,6 @@
 from flaskblog import db
-from flaskblog.models import User, PerfumeInfo, Scents
-from flaskblog.users.forms import QuestionnaireForm
+from .models import PerfumeInfo, Scents
+from .forms import QuestionnaireForm
 from collections import Counter
 
 
