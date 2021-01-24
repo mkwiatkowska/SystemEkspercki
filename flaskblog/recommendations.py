@@ -117,7 +117,8 @@ def QuestionnaireRecommendation(key):
     zmienne, aby łatwiej było wyciągnąć informacje z bazy
     '''
     chosen_gender = key[0]
-    chosen_group = key[1:-1]
+    chosen_age = key[1]
+    chosen_group = key[2:-1]
     chosen_type = key[-1:]
 
     group_name = match_group_name(chosen_group)

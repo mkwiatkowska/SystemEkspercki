@@ -11,8 +11,6 @@ from flaskblog.recommendations import (
 from flaskblog.utils import is_valid
 
 
-# users = Blueprint('users', __name__)
-
 @app.route("/")
 @app.route("/home")
 def home():
@@ -29,11 +27,11 @@ def fill_questionnaire():
     form = QuestionnaireForm()
     if form.validate_on_submit():
         gender = form.genders.data
+        age = form.ages.data
         group = form.groups.data
         scent = form.scents.data
-        key = str(gender+group+scent)
-        # return redirect('/questionnaire_results.html', key=key)
-        return render_template('questionnaire_results.html', key=key)
+        key = str(gender+age+group+scent)
+        return redirect(url_for('questionnaire_results', key=key))
 
     return render_template('questionnaire.html', title='Scents Questionnaire', form=form)
 

@@ -15,6 +15,14 @@
                     {% endfor %}
                 </div>
                 <div class="form-ckeck">
+                    Twój wiek?
+                    {% for age in form.ages %}
+                        <div class="form-check">
+                            {{ age }} {{age.label}}
+                        </div>
+                    {% endfor %}
+                </div>
+                <div class="form-ckeck">
                     Perfum z jakiej grupy zapachowej szukasz?
                     {% for group in form.groups %}
                         <div class="form-check">
