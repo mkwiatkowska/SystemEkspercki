@@ -1,8 +1,4 @@
 from flaskblog import db
-# from flask import current_app
-# from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
-# from datetime import datetime
-# from flask_login import UserMixin
 
 
 class PerfumeInfo(db.Model):
@@ -19,7 +15,7 @@ class PerfumeInfo(db.Model):
     #     'UserPreferences', backref='perfume preference', lazy=True)
 
     def __repr__(self):
-        return f"({self.id},{self.name},{self.brand})"
+        return f"({self.id},{self.name},{self.brand};{self.top};{self.heart};{self.base};{self.gender};{self.group})"
 
     def get_info(self):
         return (self.id, self.name, self.brand)
@@ -40,18 +36,3 @@ class Scents(db.Model):
     def get_info(self):
         return (self.id, self.name)
 
-# class UserPreferences(db.Model):
-#     id = db.Column(db.Integer, primary_key=True)
-#     perfume_id = db.Column(db.Integer, db.ForeignKey(
-#         'perfume_info.id'), nullable=False)
-
-#     def __repr__(self):
-#         return f"({self.id}, {self.perfume_id})"
-
-
-# class MyPreferences(db.Model):
-#     perfume_id = db.Column(db.Integer, db.ForeignKey(
-#         'perfume_info.id'), nullable=False)
-
-#     def __repr__(self):
-#         return f"({self.perfume_id})"

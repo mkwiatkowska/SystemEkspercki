@@ -7,7 +7,7 @@ from flaskblog.forms import (
     QuestionnaireForm, AddToFavourites)
 # from flaskblog.users.utils import save_picture, send_reset_email
 from flaskblog.recommendations import (
-    QuestionnaireRecommendation as qr, UserRecommendation as us)
+    QuestionnaireRecommendation as qr)
 from flaskblog.utils import is_valid
 
 
@@ -45,42 +45,6 @@ def questionnaire_results(key):
 
     return render_template('questionnaire_results.html', title='Twoje wyniki', results=results)
 
-
-# def record_exists(perfume_id):
-#     query = UserPreferences.query.filter(
-#         (UserPreferences.perfume_id.like(perfume_id))).all()
-#     print(query)
-#     if query:
-#         return True
-#     else:
-#         return False
-
-
-# @app.route("/add_favourites", methods=['GET', 'POST'])
-# def favourites():
-#     form = AddToFavourites()
-#     form.perfume.choices = [(str(p.id), str(p.name+' by '+p.brand))
-#                             for p in PerfumeInfo.query.order_by('name')]
-#     # username = current_user.username
-#     # user_id = (User.query.filter_by(username=username).first()).id
-#     choices = []
-#     tmp_choices = get_perfume_names(choices)
-#     your_choices = []
-#     for tmp in tmp_choices:
-#         your_choices.append(str(tmp[0].name+' by '+tmp[0].brand))
-#     if form.validate_on_submit():
-#         perfume = form.perfume.data
-#         # user_preference = UserPreferences(user_id=user_id, perfume_id=perfume)
-#         # if not record_exists(user_id, perfume):
-#         #     db.session.add(user_preference)
-#         #     db.session.commit()
-#         # else:
-#         #     flash('record already exists in database', 'danger')
-#         # return redirect(url_for('users.favourites'))
-
-#     return render_template('add_favourite_perfumes.html', title='Favs', form=form, tmp_choices=tmp_choices)
-
-
 def get_perfume_names(id_list):
     perfumes = []
     for p_id in id_list:
@@ -89,22 +53,6 @@ def get_perfume_names(id_list):
             PerfumeInfo.id.like(p_id.perfume_id)).all()
         perfumes.append(query)
     return perfumes
-
-
-# @app.route("/delete_preference/", methods=['POST'])
-# def delete_preference():
-#     # user = current_user.id
-#     # query = UserPreferences.query.filter(
-#     #     UserPreferences.user_id.like(user)).all()
-#     # preference = query
-#     # if preference:
-#     #     for each_one in preference:
-#     #         db.session.delete(each_one)
-#     #         db.session.commit()
-#     #     flash('Perfumes has been removed', 'success')
-#     # else:
-#     #     flash('No such record in db, please reload the page')
-#     return redirect(url_for('users.favourites'))
 
 recomendations = [
     {

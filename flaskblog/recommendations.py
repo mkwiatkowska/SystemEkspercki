@@ -46,39 +46,57 @@ def get_scents_id(scent_name):
     return scents_id
 
 
-def get_perfumes_by_criteria(list_of_scents, type_name, gender):
+def get_perfumes_by_criteria(list_of_scents, type_name, gender, age):
     '''
-    Zaciąga listę z id zapachów, które chcemy mieć w perfumach
-    DOD: zwraca listę z id perfum z pożądanymi zapachami
+    Zwraca listę z id perfum z pożądanymi zapachami
 
-    1) biorę id i sprawdzam czy występuje w ktorejkolwiek z nut
-        jeśli tak -> dodaję dany rekord do listy wyników
-    2) w prypadku gdy kilka zapachów z listy występuje to w liscie wynikowej
+        W prypadku gdy kilka zapachów z listy występuje to w liscie wynikowej
         rekord z danymi perfumami będzie powielony - im bardziej tym
         więcej zapachów pokrywa
     '''
     matching_results = []
-    for each_scent in list_of_scents:
-        query = PerfumeInfo.query.filter(
-            (PerfumeInfo.top.like(f"%,{each_scent},%") |
-             PerfumeInfo.top.like(f"%,{each_scent}") |
-             PerfumeInfo.heart.like(f"%,{each_scent},%") |
-             PerfumeInfo.top.like((f"{each_scent},%")) |
-             PerfumeInfo.heart.like(f"%, {each_scent}") |
-             PerfumeInfo.heart.like((f"{each_scent},%")) |
-             PerfumeInfo.base.like(f"%,{each_scent},%") |
-             PerfumeInfo.base.like(f"%,{each_scent}") |
-             PerfumeInfo.base.like((f"{each_scent},%")))).filter(
-            PerfumeInfo.group.like(type_name)).filter(
-            PerfumeInfo.gender.like(gender)).all()
-        # print(query)
-        if query != []:
-            #print('======= kazdy z query ========')
-            for each_match in query:
-                # print(each_match)
-                matching_results.append(each_match.id)
+
+    query = PerfumeInfo.query.all()
+    print(query)
+    if query != []:
+        for perfume in query:
+            if perfume.gender == (gender):
+                if perfume.group == type_name:
+                    if has_scent(perfume.top, [1,2,3,4,5,6,7,8,9,10]):
+                        if age == 'A':
+                            if has_scent(perfume.heart, [11,12,13,14]):
+                                matching_results.append(perfume.id)
+                            elif has_scent(perfume.base, [27,28,29,30]):
+                                matching_results.append(perfume.id)
+                        if age == 'B':
+                            if has_scent(perfume.heart, [15,16,17,18]):
+                                matching_results.append(perfume.id)
+                            elif has_scent(perfume.base, [23,24,25,26]):
+                                matching_results.append(perfume.id)
+                        if age == 'C':
+                            if has_scent(perfume.heart, [19,20,21,22]):
+                                matching_results.append(perfume.id)
+                            elif has_scent(perfume.base, [19,20,21,22]):
+                                matching_results.append(perfume.id)
+                        if age == 'D':
+                            if has_scent(perfume.heart, [23,24,25,26]):
+                                matching_results.append(perfume.id)
+                            elif has_scent(perfume.base, [15,16,17,18]):
+                                matching_results.append(perfume.id)
+                        if age == 'E':
+                            if has_scent(perfume.base, [27,28,29,30]):
+                                matching_results.append(perfume.id)
+                            elif has_scent(perfume.base, [11,12,13,14]):
+                                matching_results.append(perfume.id)
+
 
     return matching_results
+
+def has_scent(perfume_part, scent_ids):
+    for scent_id in scent_ids:
+        if str(scent_id) in str(perfume_part):
+            return True
+    return False
 
 
 def count_occurence(list_of_id_occurences):
@@ -127,7 +145,7 @@ def QuestionnaireRecommendation(key):
     list_of_scents = get_scents_id(group_name)
 
     matching_results = get_perfumes_by_criteria(
-        list_of_scents, type_name, chosen_gender)
+        list_of_scents, type_name, chosen_gender, chosen_age)
 
     perfume_occurences = count_occurence(matching_results)
     sorted_occurences = sorted(
@@ -151,173 +169,3 @@ def make_one_string(list_of_scents):
             scent_proper_list.append(scent)
     return scent_proper_list
 
-
-def get_max_key_val(dict_):
-    """Przyjmuje POJEDYNCZY histogram jako parametr i zwraca krotke z kluczem i
-    najwieksza wartoscia jaka sie w nim znajduje.
-    """
-
-    max_key_val = [None, 0]
-    for key, val in dict_.items():
-        if val > max_key_val[1]:
-            max_key_val[0] = key
-            max_key_val[1] = val
-    return max_key_val
-
-
-def get_most_popular_scents(histogram, min_freq, max_freq):
-    """Przyjmuje histogram jako parametr i:
-    min_freq : Dolny zakres czestotliwosci wystapien zapachu
-    max_freq : Gorny zakres czestotliwosci wystapien zapachu
-    Gdzie te wartosci powinny byc w zakresie od 0 do 1. Czyli np.
-    Zakres od 80% do 100% czestotliwosci to min_freq=0.8, max_freq=1.0
-
-    Jezeli najwieksza wartosc w histogramie to 10 to dolny zakres bedzie rowny
-    8 a gorny 10, wtedy wszystkie zapachy spelniajace zaleznosc:
-    8 <= czestotliwosc wystepowania zapachu <= 10 zostana zwrocone jako lista.
-    (Po nazwach)
-    """
-
-    max_key_val = get_max_key_val(dict_=histogram)
-    min_real_val = min_freq * max_key_val[1]
-    max_real_val = max_freq * max_key_val[1]
-    choosen_scents = list()
-    for scent, freq in histogram.items():
-        if min_real_val <= freq <= max_real_val:
-            choosen_scents.append(scent)
-    return choosen_scents
-
-
-def get_scents_sets(top_scents, heart_scents, base_scents):
-    """Przyjmuje liste zapachow dla glowy, serca oraz bazy i robi wszystkie
-    mozliwe permutacje bez powtorzen i zwraca zbior krotek ID-kow zapachow, czy
-    tam nazw, zalezy co podasz
-    """
-
-    # !!! To zakomentowane robi dokladnie to samo co to nizej !!!
-    # !!!         Wybierz to ktore bardziej rozumiesz         !!!
-
-    # temp_list = list()
-    # for base_scent in base_scents:
-    #     scents = (base_scent, )
-    #     for top_scent in top_scents:
-    #         scents += (top_scent, )
-    #         for heart_scent in heart_scents:
-    #             scents += (heart_scent, )
-    #             temp_list.append(scents)
-    #             scents = scents[:-1]
-    #         scents = scents[:-1]
-    # return set(temp_list)
-
-    double_combinations = list()
-    for top_scent in top_scents:
-        scent = (top_scent, )
-        for heart_scent in heart_scents:
-            scent += (heart_scent, )
-            double_combinations.append(scent)
-            scent = scent[:-1]
-
-    triple_combinations = list()
-    for double_scent in double_combinations:
-        scent = double_scent
-        for base_scent in base_scents:
-            scent += (base_scent, )
-            triple_combinations.append(scent)
-            scent = scent[:-1]
-
-    return set(triple_combinations)
-
-
-def get_scents_combinations_for_user(user_histogram, min_freq, max_freq):
-    """Tutaj masz jak to możesz wykorzystac. Ja po prostu oczekuje ze podasz mi
-    liste krotek reprezentujaca rekordy ktore Ci zwrocil select. Zwracam Ci
-    liste kombinacji zapachow.
-    """
-
-    most_popular_user_base = get_most_popular_scents(
-        histogram=user_histogram["BASE"], min_freq=min_freq, max_freq=max_freq
-    )
-    most_popular_user_top = get_most_popular_scents(
-        histogram=user_histogram["TOP"], min_freq=min_freq, max_freq=max_freq
-    )
-    most_popular_user_heart = get_most_popular_scents(
-        histogram=user_histogram["HEART"], min_freq=min_freq, max_freq=max_freq
-    )
-
-    scents_sets = get_scents_sets(
-        top_scents=most_popular_user_top,
-        heart_scents=most_popular_user_heart,
-        base_scents=most_popular_user_base
-    )
-
-    print("User histograms")
-    for k, v in user_histogram.items():
-        print(k, v)
-    # print("\nMost populart top scents")
-    # print(most_popular_user_top)
-    # print("\nMost populart HEART scents")
-    # print(most_popular_user_heart)
-    # print("\nMost populart BASE scents")
-    # print(most_popular_user_base)
-    # print("\nScents combinations (TOP, HEART, BASE)")
-    # for item in scents_sets:
-    #     print(item)
-
-    return scents_sets
-
-
-def UserRecommendation(p_ids):
-    '''
-    Gets list of perfume ids and returns list made of 3 lists,
-    each containing best matching fragrances
-    '''
-    all_tops = []
-    all_hearts = []
-    all_bases = []
-    for p_id in p_ids:
-        query = PerfumeInfo.query.filter_by(id=p_id).first()
-        all_tops.append(query.top)
-        all_hearts.append(query.heart)
-        all_bases.append(query.base)
-    formatted_tops = make_one_string(all_tops)
-    formatted_hearts = make_one_string(all_hearts)
-    formatted_bases = make_one_string(all_bases)
-
-    counted_tops = dict(Counter(formatted_tops))
-    counted_hearts = dict(Counter(formatted_hearts))
-    counted_bases = dict(Counter(formatted_bases))
-
-    histograms = {
-        "TOP": counted_tops,
-        "HEART": counted_hearts,
-        "BASE": counted_bases,
-    }
-
-    scents_combinations = get_scents_combinations_for_user(histograms, 0.9, 1)
-
-    # f"%,{},%"
-
-    for combination in scents_combinations:
-        query = PerfumeInfo.query.filter(
-            ((PerfumeInfo.top.like(f"%,{combination[0]},%") |
-              PerfumeInfo.top.like(f"%,{combination[0]}") |
-              PerfumeInfo.top.like((f"{combination[0]},%"))) &
-             (PerfumeInfo.heart.like(f"%,{combination[1]},%") |
-                PerfumeInfo.heart.like(f"%,{combination[1]}") |
-                PerfumeInfo.heart.like((f"{combination[1]},%"))) &
-                (PerfumeInfo.base.like(f"%,{combination[2]},%") |
-                 PerfumeInfo.base.like(f"%,{combination[2]}") |
-                 PerfumeInfo.base.like((f"{combination[2]},%"))))).all()
-        # print(query)
-        tmp = []
-        for q in query:
-            # print(q)
-            tmp.append(q)
-    # print('TEMPE\n\n')
-    # print(type(tmp))
-
-    print(len(scents_combinations))
-    # print(counted_hearts)
-    # print(counted_bases)
-
-    return tmp
