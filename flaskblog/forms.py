@@ -1,8 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import SubmitField, BooleanField, RadioField, SelectField
 from wtforms.validators import DataRequired
-# from flask_login import current_user
-# from flaskblog.models import User
 
 
 class QuestionnaireForm(FlaskForm):
